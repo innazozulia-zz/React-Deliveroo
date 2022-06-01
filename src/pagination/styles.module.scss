@@ -1,0 +1,42 @@
+.root {
+    display: flex;
+    max-width: 155px;
+    display: flex;
+    justify-content: center;
+    justify-content: space-between;
+    margin: auto;
+
+    :global {
+        .previous {
+            margin-right: 10px;
+            border: 1px solid #828A95;
+            padding: 2px 5px;
+            cursor: pointer;
+            border-radius: 6px;
+
+        }
+
+        .selected {
+            a {
+                color: black;
+                border-bottom: 1px solid black;
+            }
+
+        }
+
+        li {
+            a {
+                color: #828A95;
+                cursor: pointer;
+            }
+        }
+
+        .next {
+            margin-left: 10px;
+            border: 1px solid #828A95;
+            padding: 2px 5px;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+    }
+}

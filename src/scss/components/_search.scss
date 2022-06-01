@@ -1,0 +1,48 @@
+.root {
+    position: relative;
+
+    @media screen and (max-width: 1200px) {
+        margin: 20px 0;
+
+    }
+
+    .icon {
+        svg {
+            opacity: 0.5;
+            position: absolute;
+            top: 14px;
+            left: 10px;
+
+        }
+
+        .input {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 12px 20px;
+            width: 300px;
+            font-size: 16px;
+            border-radius: 10px;
+            padding-left: 40px;
+            opacity: 0.5;
+
+            &:focus {
+                opacity: 1;
+            }
+        }
+
+        .close {
+            position: absolute;
+            top: 14px;
+            left: 270px;
+            opacity: 0.3;
+
+            &:hover {
+                opacity: 0.8;
+                cursor: pointer;
+            }
+        }
+
+    }
+
+
+
+}
