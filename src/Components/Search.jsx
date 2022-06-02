@@ -1,6 +1,8 @@
 import React from "react";
+import { AppContext } from "../App";
 
-function Search({ searchValue, setSearchValue }) {
+function Search() {
+  const { searchValue, setSearchValue } = React.useContext(AppContext);
   return (
     <div className="root">
       <div className="icon">

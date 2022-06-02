@@ -5,8 +5,10 @@ import Categories from "../Components/Categories";
 import FoodBlock from "../Components/FoodItems/FoodBlock";
 import LoadingFoodBlog from "../Components/FoodItems/LoadingFoodBlock";
 import Pagination from "../pagination/Pagination";
+import { AppContext } from "../App";
 
-const Home = ({ searchValue }) => {
+const Home = () => {
+  const { searchValue } = React.useContext(AppContext);
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [category, setCategory] = React.useState(0);
