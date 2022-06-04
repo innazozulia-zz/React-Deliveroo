@@ -53,9 +53,7 @@ const Home = () => {
       <h2 className="content__title">All food</h2>
       <div className="content__items">
         {isLoading
-          ? [...new Array(10)].map((_, index) => (
-              <LoadingFoodBlog key={index} />
-            ))
+          ? [...new Array(6)].map((_, index) => <LoadingFoodBlog key={index} />)
           : items
               // .filter((obj) => {
               //   if (
