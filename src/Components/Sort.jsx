@@ -1,7 +1,11 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setSort } from "../redux/slices/filterSlice";
 
-function Sort({ sort, onClickSort }) {
+function Sort() {
   const [isVisiblePopup, setIsVisiblePopup] = React.useState(false);
+  const dispatch = useDispatch();
+  const sort = useSelector((state) => state.filter.sort);
   // const [activeSort, setActiveSort] = React.useState(0);
 
   const sortList = [
@@ -13,13 +17,12 @@ function Sort({ sort, onClickSort }) {
     { name: "alphabet (ASC)", sortProperty: "-title" },
   ];
   // const sortName = sortList[sort].name;
-
   // const onClickSort = (index) => {
   //   setActiveSort(index);
   // };
 
-  const CloseSort = (index) => {
-    onClickSort(index);
+  const CloseSort = (obj) => {
+    dispatch(setSort(obj));
     setIsVisiblePopup(false);
   };
 

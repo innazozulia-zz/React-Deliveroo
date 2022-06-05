@@ -6,23 +6,33 @@ import FoodBlock from "../Components/FoodItems/FoodBlock";
 import LoadingFoodBlog from "../Components/FoodItems/LoadingFoodBlock";
 import Pagination from "../pagination/Pagination";
 import { AppContext } from "../App";
+import { useSelector, useDispatch } from "react-redux";
+import { setCategory } from "../redux/slices/filterSlice";
 
 const Home = () => {
+  const dispatch = useDispatch();
+  const category = useSelector((state) => state.filter.category);
+  const sort = useSelector((state) => state.filter.sort.sortProperty);
   const { searchValue } = React.useContext(AppContext);
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [category, setCategory] = React.useState(0);
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [sort, setSort] = React.useState({
-    name: "popular",
-    sortProperty: "rating",
-  });
+  // const [category, setCategory] = React.useState(0);
+  // const [sort, setSort] = React.useState({
+  //   name: "popular",
+  //   sortProperty: "rating",
+  // });
+
+  const onClickCategory = (id) => {
+    console.log(id);
+    dispatch(setCategory(id));
+  };
 
   React.useEffect(() => {
     setIsLoading(true);
 
-    const sortBy = sort.sortProperty.replace("-", " ");
-    const order = sort.sortProperty.includes("-") ? "asc" : "desc";
+    const sortBy = sort.replace("-", " ");
+    const order = sort.includes("-") ? "asc" : "desc";
     const search = searchValue ? `search=${searchValue}` : "";
 
     fetch(
@@ -44,11 +54,8 @@ const Home = () => {
   return (
     <div className="container">
       <div className="content__top">
-        <Categories
-          category={category}
-          onClickCategory={(index) => setCategory(index)}
-        />
-        <Sort sort={sort} onClickSort={(index) => setSort(index)} />
+        <Categories category={category} onClickCategory={onClickCategory} />
+        <Sort />
       </div>
       <h2 className="content__title">All food</h2>
       <div className="content__items">
