@@ -5,9 +5,9 @@ const LoadingFoodBlog = (props) => (
   <ContentLoader
     className="food__block"
     speed={2}
-    width={350}
-    height={350}
-    viewBox="0 0 400 460"
+    width={300}
+    height={420}
+    viewBox="0 0 350 430"
     backgroundColor="#f3f3f3"
     foregroundColor="#ecebeb"
   >

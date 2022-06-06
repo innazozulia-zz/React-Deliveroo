@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 
 import Sort from "../Components/Sort";
 import Categories from "../Components/Categories";
@@ -7,25 +8,28 @@ import LoadingFoodBlog from "../Components/FoodItems/LoadingFoodBlock";
 import Pagination from "../pagination/Pagination";
 import { AppContext } from "../App";
 import { useSelector, useDispatch } from "react-redux";
-import { setCategory } from "../redux/slices/filterSlice";
+import { setCategory, setCurrentPage } from "../redux/slices/filterSlice";
 
 const Home = () => {
   const dispatch = useDispatch();
   const category = useSelector((state) => state.filter.category);
   const sort = useSelector((state) => state.filter.sort.sortProperty);
+  const currentPage = useSelector((state) => state.filter.currentPage);
   const { searchValue } = React.useContext(AppContext);
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [currentPage, setCurrentPage] = React.useState(1);
-  // const [category, setCategory] = React.useState(0);
-  // const [sort, setSort] = React.useState({
+  // const [currentPage, setCurrentPage] = React.useState(1);  переписали с помошью redux
+  // const [category, setCategory] = React.useState(0);  переписали с помошью redux
+  // const [sort, setSort] = React.useState({  переписали с помошью redux
   //   name: "popular",
   //   sortProperty: "rating",
   // });
 
   const onClickCategory = (id) => {
-    console.log(id);
     dispatch(setCategory(id));
+  };
+  const onChangePage = (number) => {
+    dispatch(setCurrentPage(number));
   };
 
   React.useEffect(() => {
@@ -35,17 +39,15 @@ const Home = () => {
     const order = sort.includes("-") ? "asc" : "desc";
     const search = searchValue ? `search=${searchValue}` : "";
 
-    fetch(
-      `https://6293b734089f87a57ac4de66.mockapi.io/items?page=${currentPage}&limit=6&${
-        category > 0 ? `category=${category}` : ""
-      }${search}&sortBy=${sortBy}&order=${order}
+    axios
+      .get(
+        `https://6293b734089f87a57ac4de66.mockapi.io/items?page=${currentPage}&limit=6&${
+          category > 0 ? `category=${category}` : ""
+        }${search}&sortBy=${sortBy}&order=${order}
       }`
-    )
+      )
       .then((res) => {
-        return res.json();
-      })
-      .then((json) => {
-        setItems(json);
+        setItems(res.data);
         setIsLoading(false);
       });
     window.scrollTo(0, 0);
@@ -81,7 +83,10 @@ const Home = () => {
                 />
               ))}
       </div>
-      <Pagination onChangePage={(number) => setCurrentPage(number)} />
+      <Pagination
+        currentPage={currentPage}
+        onChangePage={(number) => onChangePage(number)}
+      />
     </div>
   );
 };

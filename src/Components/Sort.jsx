@@ -6,7 +6,7 @@ function Sort() {
   const [isVisiblePopup, setIsVisiblePopup] = React.useState(false);
   const dispatch = useDispatch();
   const sort = useSelector((state) => state.filter.sort);
-  // const [activeSort, setActiveSort] = React.useState(0);
+  // const [activeSort, setActiveSort] = React.useState(0);     переписали с помошью redux
 
   const sortList = [
     { name: "popular (DESC)", sortProperty: "rating" },
@@ -16,7 +16,7 @@ function Sort() {
     { name: "alphabet (DESC)", sortProperty: "title" },
     { name: "alphabet (ASC)", sortProperty: "-title" },
   ];
-  // const sortName = sortList[sort].name;
+  // const sortName = sortList[sort].name;      переписали с помошью redux
   // const onClickSort = (index) => {
   //   setActiveSort(index);
   // };
@@ -61,9 +61,6 @@ function Sort() {
                 {obj.name}
               </li>
             ))}
-            {/* <li className="active">popular</li>
-            <li>price</li>
-            <li>alphabet</li> */}
           </ul>
         </div>
       )}
