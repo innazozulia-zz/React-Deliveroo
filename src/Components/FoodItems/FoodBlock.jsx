@@ -1,8 +1,25 @@
 import React from "react";
 
-function FoodBlock({ title, price, imageUrl, sizes, types }) {
+import { useDispatch, useSelector } from "react-redux";
+
+import { addItem } from "../../redux/slices/cartSlice.js";
+
+function FoodBlock({ id, title, price, imageUrl, sizes, types, raiting }) {
+  const dispatch = useDispatch();
   const [activeSize, setActiveSize] = React.useState(0);
   const [activeType, setActiveType] = React.useState(0);
+
+  const onClickAdd = () => {
+    const item = {
+      id,
+      title,
+      price,
+      imageUrl,
+      type: activeType,
+      size: activeSize,
+    };
+    dispatch(addItem(item));
+  };
 
   const typeNames = ["portion", "cake"];
 
@@ -44,21 +61,10 @@ function FoodBlock({ title, price, imageUrl, sizes, types }) {
         </div>
         <div className="block__add">
           <div className="block__price">from {price} $</div>
-          <button className="button button--outline button--ad">
-            {/* <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            width="16px"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="feather feather-plus"
+          <button
+            onClick={onClickAdd}
+            className="button button--outline button--ad"
           >
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg> */}
             <span>ADD</span>
             <i>0</i>
           </button>
