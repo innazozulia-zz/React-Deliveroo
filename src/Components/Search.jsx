@@ -13,6 +13,7 @@ function Search() {
     inputRef.current.focus();
   };
 
+  console.log(searchValue);
   const updateSearch = React.useCallback(
     debounce((str) => {
       setSearchValue(str);

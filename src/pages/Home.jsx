@@ -19,13 +19,19 @@ import {
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isMounted = React.useRef(false);
+
   const category = useSelector((state) => state.filter.category);
   const sort = useSelector((state) => state.filter.sort.sortProperty);
   const currentPage = useSelector((state) => state.filter.currentPage);
+
   const { searchValue } = React.useContext(AppContext);
+
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
+
+  // const isSearch = React.useRef(false);
+  // const isMounted = React.useRef(false);
+
   // const [currentPage, setCurrentPage] = React.useState(1);  переписали с помошью redux
   // const [category, setCategory] = React.useState(0);  переписали с помошью redux
   // const [sort, setSort] = React.useState({  переписали с помошью redux
@@ -40,43 +46,23 @@ const Home = () => {
     dispatch(setCurrentPage(number));
   };
 
-  React.useEffect(() => {
-    if (isMounted.current) {
-      setIsLoading(true);
-
-      const sortBy = sort;
-      // const sortBy = sort.sortProperty.replace("-", " ");
-      const order = sort;
-      // const order = sort.sortProperty.includes("-") ? "asc" : "desc";
-      const search = searchValue ? `search=${searchValue}` : "";
-
-      axios
-        .get(
-          `https://6293b734089f87a57ac4de66.mockapi.io/items?page=${currentPage}&limit=6&${
-            category > 0 ? `category=${category}` : ""
-          }${search}&sortBy=${sortBy}&order=${order}
+  const fetchItems = () => {
+    setIsLoading(true);
+    const sortBy = sort;
+    const order = sort;
+    const search = searchValue ? `search=${searchValue}` : "";
+    axios
+      .get(
+        `https://6293b734089f87a57ac4de66.mockapi.io/items?page=${currentPage}&limit=6&${
+          category > 0 ? `category=${category}` : ""
+        }${search}&sortBy=${sortBy}&order=${order}
       }`
-        )
-        .then((res) => {
-          setItems(res.data);
-          setIsLoading(false);
-        });
-      window.scrollTo(0, 0);
-    }
-  }, [category, sort, searchValue, currentPage]);
-
-  React.useEffect(() => {
-    if ((isMounted.current = true)) {
-      const params = {
-        category: category > 0 ? category : null,
-        // sortProperty: sort.sortProperty,
-        sortProperty: sort,
-        currentPage,
-      };
-      const queryString = qs.stringify(params, { skipNulls: true });
-      navigate(`/?${queryString}`);
-    }
-  }, [category, sort, searchValue, currentPage]);
+      )
+      .then((res) => {
+        setItems(res.data);
+        setIsLoading(false);
+      });
+  };
 
   React.useEffect(() => {
     if (window.location.search) {
@@ -87,10 +73,30 @@ const Home = () => {
       if (sort) {
         params.sort = sort;
       }
-      dispatch(setFilters(params));
+      dispatch(setFilters(params, sort));
     }
-    isMounted.current = true;
+    // isSearch.current = true;
   }, []);
+
+  React.useEffect(() => {
+    // window.scrollTo(0, 0);
+    // if (!isSearch.current) {
+    fetchItems();
+    // }
+    // isSearch.current = false;
+  }, [category, sort, searchValue, currentPage]);
+
+  React.useEffect(() => {
+    // if (isMounted.current) {
+    const queryString = qs.stringify({
+      sortProperty: sort,
+      category,
+      currentPage,
+    });
+    navigate(`?${queryString}`);
+    // }
+    // isMounted.current = true;
+  }, [category, sort, currentPage]);
 
   return (
     <div className="container">

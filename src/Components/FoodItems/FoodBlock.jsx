@@ -2,10 +2,16 @@ import React from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 
-import { addItem } from "../../redux/slices/cartSlice.js";
+import { addItem } from "../../redux/slices/cartSlice";
+
+const typeNames = ["portion", "cake"];
 
 function FoodBlock({ id, title, price, imageUrl, sizes, types, raiting }) {
   const dispatch = useDispatch();
+  const cartItem = useSelector((state) =>
+    state.cart.items.find((obj) => obj.id === id)
+  );
+  const addedCount = cartItem ? cartItem.count : 0;
   const [activeSize, setActiveSize] = React.useState(0);
   const [activeType, setActiveType] = React.useState(0);
 
@@ -15,13 +21,11 @@ function FoodBlock({ id, title, price, imageUrl, sizes, types, raiting }) {
       title,
       price,
       imageUrl,
-      type: activeType,
-      size: activeSize,
+      type: typeNames[activeType],
+      size: sizes[activeSize],
     };
     dispatch(addItem(item));
   };
-
-  const typeNames = ["portion", "cake"];
 
   const onClickSize = (index) => {
     setActiveSize(index);
@@ -66,7 +70,7 @@ function FoodBlock({ id, title, price, imageUrl, sizes, types, raiting }) {
             className="button button--outline button--ad"
           >
             <span>ADD</span>
-            <i>0</i>
+            {addedCount > 0 && <i>{addedCount}</i>}
           </button>
         </div>
       </div>

@@ -31,7 +31,6 @@ function Sort() {
     const handelClickOutSide = (event) => {
       if (!event.path.includes(sortRef.current)) {
         setIsVisiblePopup(false);
-        console.log("click outside!");
       }
     };
 

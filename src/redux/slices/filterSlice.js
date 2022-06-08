@@ -24,7 +24,8 @@ const filterSlice = createSlice({
     setFilters(state, action) {
       state.currentPage = Number(action.payload.currentPage);
       state.category = Number(action.payload.category);
-      state.sort.sortProperty = action.payload.sortProperty;
+      // state.sort.sortProperty = action.payload.sortProperty;
+      state.sort = action.payload.sort;
     },
   },
 });
