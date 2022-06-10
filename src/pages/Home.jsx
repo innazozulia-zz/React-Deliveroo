@@ -1,9 +1,10 @@
 import React from "react";
-import axios from "axios";
+
 import qs from "qs";
 import { useNavigate } from "react-router-dom";
 
 import Sort, { sortList } from "../Components/Sort";
+import Error from "../Components/Error";
 import Categories from "../Components/Categories";
 import FoodBlock from "../Components/FoodItems/FoodBlock";
 import LoadingFoodBlog from "../Components/FoodItems/LoadingFoodBlock";
@@ -15,6 +16,7 @@ import {
   setCurrentPage,
   setFilters,
 } from "../redux/slices/filterSlice";
+import { fetchItems } from "../redux/slices/foodSlice";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -23,14 +25,14 @@ const Home = () => {
   const category = useSelector((state) => state.filter.category);
   const sort = useSelector((state) => state.filter.sort.sortProperty);
   const currentPage = useSelector((state) => state.filter.currentPage);
+  const { items, status } = useSelector((state) => state.food);
 
   const { searchValue } = React.useContext(AppContext);
+  // const [isLoading, setIsLoading] = React.useState(true);
 
-  const [items, setItems] = React.useState([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-
+  // const [items, setItems] = React.useState([]);
   // const isSearch = React.useRef(false);
-  // const isMounted = React.useRef(false);
+  const isMounted = React.useRef(false);
 
   // const [currentPage, setCurrentPage] = React.useState(1);  переписали с помошью redux
   // const [category, setCategory] = React.useState(0);  переписали с помошью redux
@@ -46,22 +48,30 @@ const Home = () => {
     dispatch(setCurrentPage(number));
   };
 
-  const fetchItems = () => {
-    setIsLoading(true);
+  const getItems = async () => {
+    // setIsLoading(true);
     const sortBy = sort;
     const order = sort;
     const search = searchValue ? `search=${searchValue}` : "";
-    axios
-      .get(
-        `https://6293b734089f87a57ac4de66.mockapi.io/items?page=${currentPage}&limit=6&${
-          category > 0 ? `category=${category}` : ""
-        }${search}&sortBy=${sortBy}&order=${order}
-      }`
-      )
-      .then((res) => {
-        setItems(res.data);
-        setIsLoading(false);
-      });
+
+    // const { data } = await axios.get(
+    //   `https://6293b734089f87a57ac4de66.mockapi.io/items?page=${currentPage}&limit=6&${
+    //     category > 0 ? `category=${category}` : ""
+    //   }${search}&sortBy=${sortBy}&order=${order}
+    // }`
+    // );
+
+    // dispatch(setItems(data));
+
+    dispatch(
+      fetchItems({
+        sortBy,
+        order,
+        search,
+        category,
+        currentPage,
+      })
+    );
   };
 
   React.useEffect(() => {
@@ -81,22 +91,38 @@ const Home = () => {
   React.useEffect(() => {
     // window.scrollTo(0, 0);
     // if (!isSearch.current) {
-    fetchItems();
+    getItems();
     // }
     // isSearch.current = false;
   }, [category, sort, searchValue, currentPage]);
 
   React.useEffect(() => {
-    // if (isMounted.current) {
-    const queryString = qs.stringify({
-      sortProperty: sort,
-      category,
-      currentPage,
-    });
-    navigate(`?${queryString}`);
-    // }
-    // isMounted.current = true;
+    if (isMounted.current) {
+      const queryString = qs.stringify({
+        sortProperty: sort,
+        category,
+        currentPage,
+      });
+      navigate(`?${queryString}`);
+    }
+    isMounted.current = true;
   }, [category, sort, currentPage]);
+
+  const skeletons = [...new Array(6)].map((_, index) => (
+    <LoadingFoodBlog key={index} />
+  ));
+  const itemsList = items.map((obj) => (
+    <FoodBlock
+      key={obj.id}
+      id={obj.id}
+      title={obj.title}
+      price={obj.price}
+      imageUrl={obj.imageUrl}
+      sizes={obj.sizes}
+      types={obj.types}
+      raiting={obj.raiting}
+    />
+  ));
 
   return (
     <div className="container">
@@ -105,22 +131,13 @@ const Home = () => {
         <Sort />
       </div>
       <h2 className="content__title">All food</h2>
-      <div className="content__items">
-        {isLoading
-          ? [...new Array(6)].map((_, index) => <LoadingFoodBlog key={index} />)
-          : items.map((obj) => (
-              <FoodBlock
-                key={obj.id}
-                id={obj.id}
-                title={obj.title}
-                price={obj.price}
-                imageUrl={obj.imageUrl}
-                sizes={obj.sizes}
-                types={obj.types}
-                raiting={obj.raiting}
-              />
-            ))}
-      </div>
+      {status === "error" ? (
+        <Error />
+      ) : (
+        <div className="content__items">
+          {status === "loading" ? skeletons : itemsList}
+        </div>
+      )}
       <Pagination
         currentPage={currentPage}
         onChangePage={(number) => onChangePage(number)}
