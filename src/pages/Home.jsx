@@ -25,15 +25,15 @@ const Home = () => {
   const category = useSelector((state) => state.filter.category);
   const sort = useSelector((state) => state.filter.sort.sortProperty);
   const currentPage = useSelector((state) => state.filter.currentPage);
+
+  // const { category, sort, currentPage } = useSelector(selectFilter);
   const { items, status } = useSelector((state) => state.food);
 
   const { searchValue } = React.useContext(AppContext);
+  const isMounted = React.useRef(false);
   // const [isLoading, setIsLoading] = React.useState(true);
-
   // const [items, setItems] = React.useState([]);
   // const isSearch = React.useRef(false);
-  const isMounted = React.useRef(false);
-
   // const [currentPage, setCurrentPage] = React.useState(1);  переписали с помошью redux
   // const [category, setCategory] = React.useState(0);  переписали с помошью redux
   // const [sort, setSort] = React.useState({  переписали с помошью redux
@@ -49,20 +49,9 @@ const Home = () => {
   };
 
   const getItems = async () => {
-    // setIsLoading(true);
     const sortBy = sort;
     const order = sort;
     const search = searchValue ? `search=${searchValue}` : "";
-
-    // const { data } = await axios.get(
-    //   `https://6293b734089f87a57ac4de66.mockapi.io/items?page=${currentPage}&limit=6&${
-    //     category > 0 ? `category=${category}` : ""
-    //   }${search}&sortBy=${sortBy}&order=${order}
-    // }`
-    // );
-
-    // dispatch(setItems(data));
-
     dispatch(
       fetchItems({
         sortBy,
