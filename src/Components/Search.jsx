@@ -5,7 +5,7 @@ import { AppContext } from "../App";
 
 function Search() {
   const [valueInSearch, setValueInSearch] = React.useState("");
-  const { searchValue, setSearchValue } = React.useContext(AppContext); // переписали с помошью redux
+  const { searchValue, setSearchValue } = React.useContext(AppContext); // переписала с помошью redux
   const inputRef = React.useRef();
 
   const onClickClear = () => {
@@ -14,6 +14,7 @@ function Search() {
   };
 
   console.log(searchValue);
+
   const updateSearch = React.useCallback(
     debounce((str) => {
       setSearchValue(str);

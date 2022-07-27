@@ -22,31 +22,48 @@ const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const isMounted = React.useRef(false);
+  const isSearch = React.useRef(false);
+
   const category = useSelector((state) => state.filter.category);
   const sort = useSelector((state) => state.filter.sort.sortProperty);
   const currentPage = useSelector((state) => state.filter.currentPage);
 
   // const { category, sort, currentPage } = useSelector(selectFilter);
+
   const { items, status } = useSelector((state) => state.food);
 
   const { searchValue } = React.useContext(AppContext);
-  const isMounted = React.useRef(false);
+
   // const [isLoading, setIsLoading] = React.useState(true);
   // const [items, setItems] = React.useState([]);
-  // const isSearch = React.useRef(false);
-  // const [currentPage, setCurrentPage] = React.useState(1);  переписали с помошью redux
-  // const [category, setCategory] = React.useState(0);  переписали с помошью redux
-  // const [sort, setSort] = React.useState({  переписали с помошью redux
+
+  // const [currentPage, setCurrentPage] = React.useState(1);  переписала с помошью redux
+  // const [category, setCategory] = React.useState(0);  переписала с помошью redux
+  // const [sort, setSort] = React.useState({  переписала с помошью redux
   //   name: "popular",
   //   sortProperty: "rating",
   // });
 
-  const onClickCategory = (id) => {
+  const onClickCategory = React.useCallback((id) => {
     dispatch(setCategory(id));
-  };
+  }, []);
+
   const onChangePage = (number) => {
     dispatch(setCurrentPage(number));
   };
+
+  React.useEffect(() => {
+    if (isMounted.current) {
+      const queryString = qs.stringify({
+        sortProperty: sort,
+        category,
+        currentPage,
+      });
+      navigate(`?${queryString}`);
+    }
+    isMounted.current = true;
+  }, [category, sort, currentPage]);
 
   const getItems = async () => {
     const sortBy = sort;
@@ -63,39 +80,29 @@ const Home = () => {
     );
   };
 
+  //first render
   React.useEffect(() => {
     if (window.location.search) {
       const params = qs.parse(window.location.search.substring(1));
+
       const sort = sortList.find(
         (obj) => obj.sortProperty === params.sortProperty
       );
       if (sort) {
         params.sort = sort;
       }
-      dispatch(setFilters(params, sort));
+      dispatch(setFilters({ ...params, sort }));
+      isSearch.current = true;
     }
-    // isSearch.current = true;
   }, []);
 
   React.useEffect(() => {
-    // window.scrollTo(0, 0);
-    // if (!isSearch.current) {
-    getItems();
-    // }
-    // isSearch.current = false;
-  }, [category, sort, searchValue, currentPage]);
-
-  React.useEffect(() => {
-    if (isMounted.current) {
-      const queryString = qs.stringify({
-        sortProperty: sort,
-        category,
-        currentPage,
-      });
-      navigate(`?${queryString}`);
+    window.scrollTo(0, 0);
+    if (!isSearch.current) {
+      getItems();
     }
-    isMounted.current = true;
-  }, [category, sort, currentPage]);
+    isSearch.current = false;
+  }, [category, sort, searchValue, currentPage]);
 
   const skeletons = [...new Array(6)].map((_, index) => (
     <LoadingFoodBlog key={index} />
